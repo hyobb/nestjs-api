@@ -1,4 +1,4 @@
-import { ChildEntity, Column } from 'typeorm';
+import { ChildEntity, Column, ManyToMany } from 'typeorm';
 import {
   Resource,
   ResourceType,

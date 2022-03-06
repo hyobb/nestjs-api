@@ -26,3 +26,7 @@ export class Resource extends BaseEntity {
   })
   metadata: {};
 }
+
+export interface Linkable {
+  document: Document;
+}

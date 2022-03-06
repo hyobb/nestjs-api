@@ -94,6 +94,10 @@ export class ResourcesService {
     }
   }
 
+  async findOne(id) {
+    return await this.documentsService.findOne(id);
+  }
+
   getResourceType(contentType): ResourceType {
     const FILE_CONTENT_TYPES = [
       'application/pdf',

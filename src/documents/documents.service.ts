@@ -22,4 +22,16 @@ export class DocumentsService {
 
     return document;
   }
+
+  async findOne(documentId: number): Promise<Document> {
+    const document: Document = await this.documentsRepository.findOne(
+      documentId,
+      {
+        relations: ['links'],
+      },
+    );
+
+    this.logger.info(document);
+    return document;
+  }
 }
