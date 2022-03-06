@@ -7,6 +7,12 @@ import { FileMetadata } from '../files/entities/file.entity';
 import { Resource, ResourceType } from './entities/resource.entity';
 import { ResourcesRepository } from './resources.repository';
 import { FilesService } from 'src/files/files.service';
+import { CreateUrlDto } from 'src/urls/dtos/create-url.dto';
+import { UrlMetadata } from 'src/urls/entities/url.entity';
+import { UrlsService } from 'src/urls/urls.service';
+import { DocumentMetadata } from 'src/documents/entities/document.entity';
+import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
+import { DocumentsService } from 'src/documents/documents.service';
 
 @Injectable()
 export class ResourcesService {
@@ -15,11 +21,15 @@ export class ResourcesService {
     private readonly resourcesRepository: ResourcesRepository,
     @Inject(FilesService)
     private readonly filesService: FilesService,
+    @Inject(UrlsService)
+    private readonly urlsService: UrlsService,
+    @Inject(DocumentsService)
+    private readonly documentsService: DocumentsService,
     @InjectPinoLogger(ResourcesService.name)
     private readonly logger: PinoLogger,
   ) {}
 
-  async create(resourceDto: CreateResourceDto) {
+  async create(resourceDto: CreateResourceDto): Promise<Resource> {
     const resourceType: ResourceType = this.getResourceType(
       resourceDto.contentType,
     );
@@ -45,7 +55,41 @@ export class ResourcesService {
       };
 
       const resource: Resource = await this.filesService.create(createFileDto);
-      this.logger.info(resource);
+
+      return resource;
+    }
+
+    if (resourceType == ResourceType.DOCUMENT) {
+      const metadata: DocumentMetadata = {
+        doctype: resourceDto.contentType.split('.').pop(),
+        creator: Math.random().toString(16),
+        origin: Math.random().toString(16),
+      };
+      const createDocumentDto: CreateDocumentDto = {
+        name: resourceDto.name,
+        type: resourceType,
+        metadata: metadata,
+      };
+
+      const resource: Resource = await this.documentsService.create(
+        createDocumentDto,
+      );
+
+      return resource;
+    }
+
+    if (resourceType == ResourceType.URL) {
+      const metadata: UrlMetadata = {
+        path: resourceDto.target,
+      };
+      const createUrlDto: CreateUrlDto = {
+        name: resourceDto.name,
+        type: resourceType,
+        metadata: metadata,
+      };
+
+      const resource: Resource = await this.urlsService.create(createUrlDto);
+
       return resource;
     }
   }

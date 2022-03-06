@@ -7,6 +7,8 @@ import { pinoLoggerConfig } from './libs/configs/pino-logger.config';
 import { TypeormConfig } from './libs/configs/typeorm.config';
 import { ResourcesModule } from './resources/resources.module';
 import { FilesModule } from './files/files.module';
+import { UrlsModule } from './urls/urls.module';
+import { DocumentsModule } from './documents/documents.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { FilesModule } from './files/files.module';
     LoggerModule.forRoot(pinoLoggerConfig),
     ResourcesModule,
     FilesModule,
+    UrlsModule,
+    DocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

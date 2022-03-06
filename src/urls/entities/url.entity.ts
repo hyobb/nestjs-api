@@ -1,7 +1,10 @@
 import { ChildEntity, Column } from 'typeorm';
-import { Resource, ResourceType } from './resource.entity';
+import {
+  Resource,
+  ResourceType,
+} from '../../resources/entities/resource.entity';
 
-interface UrlMetadata {
+export interface UrlMetadata {
   path: string;
 }
 

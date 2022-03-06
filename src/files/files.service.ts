@@ -14,10 +14,12 @@ export class FilesService {
     private readonly logger: PinoLogger,
   ) {}
 
-  async create(fileDto: CreateFileDto) {
+  async create(fileDto: CreateFileDto): Promise<File> {
     const file: File = await this.filesRepository.save(fileDto);
-    this.logger.info('file is created');
+
+    this.logger.info('File is created');
     this.logger.info(file);
+
     return file;
   }
 }
