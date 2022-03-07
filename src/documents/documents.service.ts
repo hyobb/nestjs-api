@@ -14,6 +14,10 @@ export class DocumentsService {
     private readonly logger: PinoLogger,
   ) {}
 
+  async findAll(): Promise<Document[]> {
+    return await this.documentsRepository.find({ relations: ['links'] });
+  }
+
   async create(documentDto: CreateDocumentDto): Promise<Document> {
     const document: Document = await this.documentsRepository.save(documentDto);
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ResponseDocumentDto } from 'src/documents/dtos/response-document.dto';
 import { Document } from 'src/documents/entities/document.entity';
@@ -10,14 +10,22 @@ import { ResourcesService } from './resources.service';
 import { ResponseUrlDto } from 'src/urls/dtos/response-url.dto';
 import { Url } from 'src/urls/entities/url.entity';
 import { ResponseResourceDto } from './dtos/response-resource.dto';
+import { QueryResourceDto } from './dtos/query-resource.dto';
 
 @Controller('resources')
 export class ResourcesController {
   constructor(
     private readonly resourcesService: ResourcesService,
-    @InjectPinoLogger(ResourcesService.name)
+    @InjectPinoLogger(ResourcesController.name)
     private readonly logger: PinoLogger,
   ) {}
+
+  @Get()
+  async findAll(@Query() queryDto: QueryResourceDto) {
+    const resources = await this.resourcesService.findAll(queryDto);
+
+    return resources.map(this.getResponseDto);
+  }
 
   @Post()
   async create(@Body() resourceDto: CreateResourceDto) {

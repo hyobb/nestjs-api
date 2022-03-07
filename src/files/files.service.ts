@@ -14,6 +14,10 @@ export class FilesService {
     private readonly logger: PinoLogger,
   ) {}
 
+  async findAll(): Promise<File[]> {
+    return await this.filesRepository.find();
+  }
+
   async create(fileDto: CreateFileDto): Promise<File> {
     const file: File = await this.filesRepository.save(fileDto);
 

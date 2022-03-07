@@ -14,6 +14,10 @@ export class UrlsService {
     private readonly logger: PinoLogger,
   ) {}
 
+  async findAll(): Promise<Url[]> {
+    return await this.urlsRepository.find();
+  }
+
   async create(urlDto: CreateUrlDto): Promise<Url> {
     const url: Url = await this.urlsRepository.save(urlDto);
     this.logger.info('Url is created!');

@@ -15,6 +15,7 @@ import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
 import { DocumentsService } from 'src/documents/documents.service';
 import { InvalidResourceTypeException } from 'src/libs/exceptions/resources/invalid-resource-type.exception';
 import { NotFoundResourceException } from 'src/libs/exceptions/resources/not-found-resource.exception';
+import { QueryResourceDto } from './dtos/query-resource.dto';
 
 @Injectable()
 export class ResourcesService {
@@ -30,6 +31,24 @@ export class ResourcesService {
     @InjectPinoLogger(ResourcesService.name)
     private readonly logger: PinoLogger,
   ) {}
+
+  async findAll(queryDto: QueryResourceDto) {
+    console.log(queryDto);
+    if (queryDto.type == undefined) {
+      return this.resourcesRepository.find({
+        relations: ['links'],
+      });
+    }
+
+    switch (queryDto.type) {
+      case ResourceType.DOCUMENT:
+        return this.documentsService.findAll();
+      case ResourceType.FILE:
+        return this.filesService.findAll();
+      case ResourceType.URL:
+        return this.urlsService.findAll();
+    }
+  }
 
   async create(resourceDto: CreateResourceDto): Promise<Resource> {
     const resourceType: ResourceType = this.getResourceType(
@@ -100,13 +119,14 @@ export class ResourcesService {
   }
 
   async findOne(id): Promise<Resource> {
-    const resource = await this.resourcesRepository.findOne(id);
+    const resource = await this.resourcesRepository.findOne(id, {
+      relations: ['links'],
+    });
+
     if (resource == undefined) {
       throw new NotFoundResourceException();
     }
-    if (resource.type == ResourceType.DOCUMENT) {
-      return this.documentsService.findOne(resource.id);
-    }
+
     return resource;
   }
 
