@@ -1,10 +1,11 @@
 import { ChildEntity, Column } from 'typeorm';
 import {
   Resource,
+  ResourceMetadata,
   ResourceType,
 } from '../../resources/entities/resource.entity';
 
-export interface FileMetadata {
+export interface FileMetadata extends ResourceMetadata {
   path: string;
   mimeType: string;
   size: number;

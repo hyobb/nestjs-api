@@ -1,10 +1,11 @@
-import { ChildEntity, Column, ManyToMany } from 'typeorm';
+import { ChildEntity, Column } from 'typeorm';
 import {
   Resource,
+  ResourceMetadata,
   ResourceType,
 } from '../../resources/entities/resource.entity';
 
-export interface UrlMetadata {
+export interface UrlMetadata extends ResourceMetadata {
   path: string;
 }
 

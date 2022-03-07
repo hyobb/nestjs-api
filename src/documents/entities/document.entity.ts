@@ -2,17 +2,16 @@ import { File } from 'src/files/entities/file.entity';
 import { Url } from 'src/urls/entities/url.entity';
 import { ChildEntity, Column, JoinTable, ManyToMany } from 'typeorm';
 import {
-  Linkable,
   Resource,
+  ResourceMetadata,
   ResourceType,
 } from '../../resources/entities/resource.entity';
 
-export interface DocumentMetadata {
+export interface DocumentMetadata extends ResourceMetadata {
   doctype: string;
   creator: string;
   origin: string;
 }
-
 @ChildEntity(ResourceType.DOCUMENT)
 export class Document extends Resource {
   @Column({
@@ -38,5 +37,5 @@ export class Document extends Resource {
       referencedColumnName: 'id',
     },
   })
-  links: Resource[];
+  links: Array<Url | File>;
 }

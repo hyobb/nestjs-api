@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CreateFileDto } from '../files/dtos/create-file.dto';
@@ -14,6 +14,7 @@ import { DocumentMetadata } from 'src/documents/entities/document.entity';
 import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
 import { DocumentsService } from 'src/documents/documents.service';
 import { InvalidResourceTypeException } from 'src/libs/exceptions/resources/invalid-resource-type.exception';
+import { NotFoundResourceException } from 'src/libs/exceptions/resources/not-found-resource.exception';
 
 @Injectable()
 export class ResourcesService {
@@ -98,8 +99,15 @@ export class ResourcesService {
     }
   }
 
-  async findOne(id) {
-    return await this.documentsService.findOne(id);
+  async findOne(id): Promise<Resource> {
+    const resource = await this.resourcesRepository.findOne(id);
+    if (resource == undefined) {
+      throw new NotFoundResourceException();
+    }
+    if (resource.type == ResourceType.DOCUMENT) {
+      return this.documentsService.findOne(resource.id);
+    }
+    return resource;
   }
 
   getResourceType(contentType): ResourceType {
