@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CreateFileDto } from '../files/dtos/create-file.dto';
@@ -13,6 +13,7 @@ import { UrlsService } from 'src/urls/urls.service';
 import { DocumentMetadata } from 'src/documents/entities/document.entity';
 import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
 import { DocumentsService } from 'src/documents/documents.service';
+import { InvalidResourceTypeException } from 'src/libs/exceptions/resources/invalid-resource-type.exception';
 
 @Injectable()
 export class ResourcesService {
@@ -34,63 +35,66 @@ export class ResourcesService {
       resourceDto.contentType,
     );
 
-    if (resourceType == ResourceType.FILE) {
-      const path =
-        'foo/boo/' +
-        Math.random().toString(16) +
-        '.' +
-        resourceDto.contentType.split('/').pop();
-      const size = Math.random();
-      const mimeType = resourceDto.contentType;
-      const metadata: FileMetadata = {
-        path: path,
-        size: size,
-        mimeType: mimeType,
-      };
+    switch (resourceType) {
+      case ResourceType.FILE: {
+        const path =
+          'foo/boo/' +
+          Math.random().toString(16) +
+          '.' +
+          resourceDto.contentType.split('/').pop();
+        const metadata: FileMetadata = {
+          path: path,
+          size: Math.random(),
+          mimeType: resourceDto.contentType,
+        };
 
-      const createFileDto: CreateFileDto = {
-        name: resourceDto.name,
-        type: resourceType,
-        metadata: metadata,
-      };
+        const createFileDto: CreateFileDto = {
+          name: resourceDto.name,
+          type: resourceType,
+          metadata: metadata,
+        };
 
-      const resource: Resource = await this.filesService.create(createFileDto);
+        const resource: Resource = await this.filesService.create(
+          createFileDto,
+        );
 
-      return resource;
-    }
+        return resource;
+      }
+      case ResourceType.DOCUMENT: {
+        const metadata: DocumentMetadata = {
+          doctype: resourceDto.contentType.split('.').pop(),
+          creator: Math.random().toString(16),
+          origin: Math.random().toString(16),
+        };
+        const createDocumentDto: CreateDocumentDto = {
+          name: resourceDto.name,
+          type: resourceType,
+          metadata: metadata,
+        };
 
-    if (resourceType == ResourceType.DOCUMENT) {
-      const metadata: DocumentMetadata = {
-        doctype: resourceDto.contentType.split('.').pop(),
-        creator: Math.random().toString(16),
-        origin: Math.random().toString(16),
-      };
-      const createDocumentDto: CreateDocumentDto = {
-        name: resourceDto.name,
-        type: resourceType,
-        metadata: metadata,
-      };
+        const resource: Resource = await this.documentsService.create(
+          createDocumentDto,
+        );
 
-      const resource: Resource = await this.documentsService.create(
-        createDocumentDto,
-      );
+        return resource;
+      }
+      case ResourceType.URL: {
+        const metadata: UrlMetadata = {
+          path: resourceDto.target,
+        };
+        const createUrlDto: CreateUrlDto = {
+          name: resourceDto.name,
+          type: resourceType,
+          metadata: metadata,
+        };
 
-      return resource;
-    }
+        const resource: Resource = await this.urlsService.create(createUrlDto);
 
-    if (resourceType == ResourceType.URL) {
-      const metadata: UrlMetadata = {
-        path: resourceDto.target,
-      };
-      const createUrlDto: CreateUrlDto = {
-        name: resourceDto.name,
-        type: resourceType,
-        metadata: metadata,
-      };
-
-      const resource: Resource = await this.urlsService.create(createUrlDto);
-
-      return resource;
+        return resource;
+      }
+      default:
+        throw new InvalidResourceTypeException();
+        break;
     }
   }
 
