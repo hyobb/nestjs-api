@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { File } from './entities/file.entity';
+import { File, FileMetadata } from './entities/file.entity';
 import { CreateFileDto } from './dtos/create-file.dto';
 import { FilesRepository } from './files.repository';
+import { CreateResourceDto } from 'src/resources/dtos/create-resource.dto';
+import { ResourceType } from 'src/resources/entities/resource.entity';
 
 @Injectable()
 export class FilesService {
@@ -18,8 +20,24 @@ export class FilesService {
     return await this.filesRepository.find();
   }
 
-  async create(fileDto: CreateFileDto): Promise<File> {
-    const file: File = await this.filesRepository.save(fileDto);
+  async create(resourceDto: CreateResourceDto): Promise<File> {
+    const path =
+      'foo/boo/' +
+      Math.random().toString(16) +
+      '.' +
+      resourceDto.contentType.split('/').pop();
+    const metadata: FileMetadata = {
+      path: path,
+      size: Math.random(),
+      mimeType: resourceDto.contentType,
+    };
+
+    const createFileDto: CreateFileDto = {
+      name: resourceDto.name,
+      type: ResourceType.FILE,
+      metadata: metadata,
+    };
+    const file: File = await this.filesRepository.save(createFileDto);
 
     this.logger.info('File is created');
     this.logger.info(file);

@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { Document } from './entities/document.entity';
+import {
+  Doctype,
+  Document,
+  DocumentMetadata,
+} from './entities/document.entity';
 import { DocumentsRepository } from './documents.repository';
 import { CreateDocumentDto } from './dtos/create-document.dto';
+import { CreateResourceDto } from 'src/resources/dtos/create-resource.dto';
+import { ResourceType } from 'src/resources/entities/resource.entity';
 
 @Injectable()
 export class DocumentsService {
@@ -18,8 +24,21 @@ export class DocumentsService {
     return await this.documentsRepository.find({ relations: ['links'] });
   }
 
-  async create(documentDto: CreateDocumentDto): Promise<Document> {
-    const document: Document = await this.documentsRepository.save(documentDto);
+  async create(resourceDto: CreateResourceDto): Promise<Document> {
+    const metadata: DocumentMetadata = {
+      doctype: Doctype[resourceDto.contentType.split('.').pop()],
+      creator: Math.random().toString(16),
+      origin: Math.random().toString(16),
+    };
+    const createDocumentDto: CreateDocumentDto = {
+      name: resourceDto.name,
+      type: ResourceType.DOCUMENT,
+      metadata: metadata,
+    };
+
+    const document: Document = await this.documentsRepository.save(
+      createDocumentDto,
+    );
 
     this.logger.info('Document is created');
     this.logger.info(document);

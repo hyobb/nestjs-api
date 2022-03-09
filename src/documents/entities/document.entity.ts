@@ -12,6 +12,19 @@ export interface DocumentMetadata extends ResourceMetadata {
   creator: string;
   origin: string;
 }
+
+export enum Doctype {
+  document = 'doc',
+  presentation = 'presentation',
+  spreadsheet = 'sheet',
+}
+
+export const DOCUMENT_CONTENT_TYPES = [
+  'application/vnd.google-apps.document',
+  'application/vnd.google-apps.presentation',
+  'application/vnd.google-apps.spreadsheet',
+];
+
 @ChildEntity(ResourceType.DOCUMENT)
 export class Document extends Resource {
   @Column({

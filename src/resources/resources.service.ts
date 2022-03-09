@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CreateFileDto } from '../files/dtos/create-file.dto';
 import { CreateResourceDto } from './dtos/create-resource.dto';
-import { FileMetadata } from '../files/entities/file.entity';
+import { FILE_CONTENT_TYPES } from '../files/entities/file.entity';
 import { Resource, ResourceType } from './entities/resource.entity';
 import { ResourcesRepository } from './resources.repository';
 import { FilesService } from 'src/files/files.service';
 import { CreateUrlDto } from 'src/urls/dtos/create-url.dto';
 import { UrlMetadata } from 'src/urls/entities/url.entity';
 import { UrlsService } from 'src/urls/urls.service';
-import { DocumentMetadata } from 'src/documents/entities/document.entity';
+import { DOCUMENT_CONTENT_TYPES } from 'src/documents/entities/document.entity';
 import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
 import { DocumentsService } from 'src/documents/documents.service';
 import { InvalidResourceTypeException } from 'src/libs/exceptions/resources/invalid-resource-type.exception';
@@ -57,68 +57,21 @@ export class ResourcesService {
 
     switch (resourceType) {
       case ResourceType.FILE: {
-        const path =
-          'foo/boo/' +
-          Math.random().toString(16) +
-          '.' +
-          resourceDto.contentType.split('/').pop();
-        const metadata: FileMetadata = {
-          path: path,
-          size: Math.random(),
-          mimeType: resourceDto.contentType,
-        };
-
-        const createFileDto: CreateFileDto = {
-          name: resourceDto.name,
-          type: resourceType,
-          metadata: metadata,
-        };
-
-        const resource: Resource = await this.filesService.create(
-          createFileDto,
-        );
-
-        return resource;
+        return await this.filesService.create(resourceDto);
       }
       case ResourceType.DOCUMENT: {
-        const metadata: DocumentMetadata = {
-          doctype: resourceDto.contentType.split('.').pop(),
-          creator: Math.random().toString(16),
-          origin: Math.random().toString(16),
-        };
-        const createDocumentDto: CreateDocumentDto = {
-          name: resourceDto.name,
-          type: resourceType,
-          metadata: metadata,
-        };
-
-        const resource: Resource = await this.documentsService.create(
-          createDocumentDto,
-        );
-
-        return resource;
+        return await this.documentsService.create(resourceDto);
       }
       case ResourceType.URL: {
-        const metadata: UrlMetadata = {
-          path: resourceDto.target,
-        };
-        const createUrlDto: CreateUrlDto = {
-          name: resourceDto.name,
-          type: resourceType,
-          metadata: metadata,
-        };
-
-        const resource: Resource = await this.urlsService.create(createUrlDto);
-
-        return resource;
+        return await this.urlsService.create(resourceDto);
       }
       default:
         throw new InvalidResourceTypeException();
-        break;
     }
   }
 
   async findOne(id): Promise<Resource> {
+    console.log(ResourceType['FILE']);
     const resource = await this.resourcesRepository.findOne(id, {
       relations: ['links'],
     });
@@ -131,19 +84,6 @@ export class ResourcesService {
   }
 
   getResourceType(contentType): ResourceType {
-    const FILE_CONTENT_TYPES = [
-      'application/pdf',
-      'application/octet-stream',
-      'image',
-      'video',
-    ];
-
-    const DOCUMENT_CONTENT_TYPES = [
-      'application/vnd.google-apps.document',
-      'application/vnd.google-apps.presentation',
-      'application/vnd.google-apps.spreadsheet',
-    ];
-
     if (FILE_CONTENT_TYPES.includes(contentType)) {
       return ResourceType.FILE;
     }

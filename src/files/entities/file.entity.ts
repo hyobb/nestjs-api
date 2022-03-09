@@ -11,6 +11,13 @@ export interface FileMetadata extends ResourceMetadata {
   size: number;
 }
 
+export const FILE_CONTENT_TYPES = [
+  'application/pdf',
+  'application/octet-stream',
+  'image',
+  'video',
+];
+
 @ChildEntity(ResourceType.FILE)
 export class File extends Resource {
   @Column({
