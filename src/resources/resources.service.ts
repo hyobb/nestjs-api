@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CreateResourceDto } from './dtos/create-resource.dto';
-import { FILE_CONTENT_TYPES } from '../files/entities/file.entity';
+import { File, FILE_CONTENT_TYPES } from '../files/entities/file.entity';
 import { Resource, ResourceType } from './entities/resource.entity';
 import { ResourcesRepository } from './resources.repository';
 import { FilesService } from '../files/files.service';
@@ -12,6 +12,9 @@ import { DocumentsService } from '../documents/documents.service';
 import { InvalidResourceTypeException } from '../libs/exceptions/resources/invalid-resource-type.exception';
 import { NotFoundResourceException } from '../libs/exceptions/resources/not-found-resource.exception';
 import { QueryResourceDto } from './dtos/query-resource.dto';
+import { Url } from '../urls/entities/url.entity';
+import { NotFoundLinkException } from '../libs/exceptions/links/not-found-link.exception';
+import { BadRequestLinkException } from '../libs/exceptions/links/bad-request-link.exception';
 
 @Injectable()
 export class ResourcesService {
@@ -75,6 +78,25 @@ export class ResourcesService {
     }
 
     return resource;
+  }
+
+  async link(documentId: number, linkId: number) {
+    const document = await this.documentsService.findOne(documentId);
+    const link = await this.findOne(linkId);
+
+    if (document == undefined) {
+      throw new NotFoundResourceException();
+    }
+
+    if (link == undefined) {
+      throw new NotFoundLinkException();
+    }
+
+    if (link.type == ResourceType.DOCUMENT) {
+      throw new BadRequestLinkException();
+    }
+
+    this.documentsService.link(document, link as Url | File);
   }
 
   getResourceType(contentType): ResourceType {

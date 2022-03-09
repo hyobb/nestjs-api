@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ResponseDocumentDto } from '../documents/dtos/response-document.dto';
 import { Document } from '../documents/entities/document.entity';
@@ -11,6 +11,7 @@ import { ResponseUrlDto } from '../urls/dtos/response-url.dto';
 import { Url } from '../urls/entities/url.entity';
 import { ResponseResourceDto } from './dtos/response-resource.dto';
 import { QueryResourceDto } from './dtos/query-resource.dto';
+import { LinkResourceDto } from './dtos/link-resource.dto';
 
 @Controller('resources')
 export class ResourcesController {
@@ -39,6 +40,15 @@ export class ResourcesController {
     const resource = await this.resourcesService.findOne(id);
 
     return this.getResponseDto(resource);
+  }
+
+  @HttpCode(201)
+  @Post(':id')
+  async link(
+    @Param('id') id: number,
+    @Body() LinkResourceDto: LinkResourceDto,
+  ) {
+    await this.resourcesService.link(id, LinkResourceDto.link_id);
   }
 
   private getResponseDto(resource: Resource): ResponseResourceDto {

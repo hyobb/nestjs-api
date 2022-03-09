@@ -10,6 +10,8 @@ import { DocumentsRepository } from './documents.repository';
 import { CreateDocumentDto } from './dtos/create-document.dto';
 import { CreateResourceDto } from '../resources/dtos/create-resource.dto';
 import { ResourceType } from '../resources/entities/resource.entity';
+import { Url } from '../urls/entities/url.entity';
+import { File } from '../files/entities/file.entity';
 
 @Injectable()
 export class DocumentsService {
@@ -43,6 +45,17 @@ export class DocumentsService {
     this.logger.info({ msg: 'Document is created', document: document });
 
     return document;
+  }
+
+  async link(document: Document, link: Url | File) {
+    document.links = document.links.concat(link);
+    this.documentsRepository.save(document);
+
+    this.logger.info({
+      msg: 'Resource is linked',
+      document: document,
+      link: link,
+    });
   }
 
   async findOne(documentId: number): Promise<Document> {
