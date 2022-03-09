@@ -4,8 +4,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { File, FileMetadata } from './entities/file.entity';
 import { CreateFileDto } from './dtos/create-file.dto';
 import { FilesRepository } from './files.repository';
-import { CreateResourceDto } from 'src/resources/dtos/create-resource.dto';
-import { ResourceType } from 'src/resources/entities/resource.entity';
+import { CreateResourceDto } from '../resources/dtos/create-resource.dto';
+import { ResourceType } from '../resources/entities/resource.entity';
 
 @Injectable()
 export class FilesService {
@@ -39,8 +39,7 @@ export class FilesService {
     };
     const file: File = await this.filesRepository.save(createFileDto);
 
-    this.logger.info('File is created');
-    this.logger.info(file);
+    this.logger.info({ msg: 'File is created', file: file });
 
     return file;
   }

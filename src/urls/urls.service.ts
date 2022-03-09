@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { CreateResourceDto } from 'src/resources/dtos/create-resource.dto';
-import { ResourceType } from 'src/resources/entities/resource.entity';
+import { CreateResourceDto } from '../resources/dtos/create-resource.dto';
+import { ResourceType } from '../resources/entities/resource.entity';
 import { CreateUrlDto } from './dtos/create-url.dto';
 import { Url, UrlMetadata } from './entities/url.entity';
 import { UrlsRepository } from './urls.repository';
@@ -32,8 +32,7 @@ export class UrlsService {
 
     const url: Url = await this.urlsRepository.save(createUrlDto);
 
-    this.logger.info('Url is created!');
-    this.logger.info('Url:' + url);
+    this.logger.info({ msg: 'Url is created!', url: url });
 
     return url;
   }

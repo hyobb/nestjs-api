@@ -1,10 +1,10 @@
 import { Exclude, Expose } from 'class-transformer';
-import { ResponseFileDto } from 'src/files/dtos/response-file.dto';
-import { File } from 'src/files/entities/file.entity';
-import { ResponseResourceDto } from 'src/resources/dtos/response-resource.dto';
-import { ResourceType } from 'src/resources/entities/resource.entity';
-import { ResponseUrlDto } from 'src/urls/dtos/response-url.dto';
-import { Url } from 'src/urls/entities/url.entity';
+import { ResponseFileDto } from '../../files/dtos/response-file.dto';
+import { File } from '../../files/entities/file.entity';
+import { ResponseResourceDto } from '../../resources/dtos/response-resource.dto';
+import { ResourceType } from '../../resources/entities/resource.entity';
+import { ResponseUrlDto } from '../../urls/dtos/response-url.dto';
+import { Url } from '../../urls/entities/url.entity';
 import { Document, DocumentMetadata } from '../entities/document.entity';
 
 export class ResponseDocumentDto implements ResponseResourceDto {

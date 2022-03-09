@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { ResponseDocumentDto } from 'src/documents/dtos/response-document.dto';
-import { Document } from 'src/documents/entities/document.entity';
-import { File } from 'src/files/entities/file.entity';
-import { ResponseFileDto } from 'src/files/dtos/response-file.dto';
+import { ResponseDocumentDto } from '../documents/dtos/response-document.dto';
+import { Document } from '../documents/entities/document.entity';
+import { File } from '../files/entities/file.entity';
+import { ResponseFileDto } from '../files/dtos/response-file.dto';
 import { CreateResourceDto } from './dtos/create-resource.dto';
 import { Resource, ResourceType } from './entities/resource.entity';
 import { ResourcesService } from './resources.service';
-import { ResponseUrlDto } from 'src/urls/dtos/response-url.dto';
-import { Url } from 'src/urls/entities/url.entity';
+import { ResponseUrlDto } from '../urls/dtos/response-url.dto';
+import { Url } from '../urls/entities/url.entity';
 import { ResponseResourceDto } from './dtos/response-resource.dto';
 import { QueryResourceDto } from './dtos/query-resource.dto';
 

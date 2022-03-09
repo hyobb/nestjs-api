@@ -1,20 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { CreateFileDto } from '../files/dtos/create-file.dto';
 import { CreateResourceDto } from './dtos/create-resource.dto';
 import { FILE_CONTENT_TYPES } from '../files/entities/file.entity';
 import { Resource, ResourceType } from './entities/resource.entity';
 import { ResourcesRepository } from './resources.repository';
-import { FilesService } from 'src/files/files.service';
-import { CreateUrlDto } from 'src/urls/dtos/create-url.dto';
-import { UrlMetadata } from 'src/urls/entities/url.entity';
-import { UrlsService } from 'src/urls/urls.service';
-import { DOCUMENT_CONTENT_TYPES } from 'src/documents/entities/document.entity';
-import { CreateDocumentDto } from 'src/documents/dtos/create-document.dto';
-import { DocumentsService } from 'src/documents/documents.service';
-import { InvalidResourceTypeException } from 'src/libs/exceptions/resources/invalid-resource-type.exception';
-import { NotFoundResourceException } from 'src/libs/exceptions/resources/not-found-resource.exception';
+import { FilesService } from '../files/files.service';
+import { UrlsService } from '../urls/urls.service';
+import { DOCUMENT_CONTENT_TYPES } from '../documents/entities/document.entity';
+import { DocumentsService } from '../documents/documents.service';
+import { InvalidResourceTypeException } from '../libs/exceptions/resources/invalid-resource-type.exception';
+import { NotFoundResourceException } from '../libs/exceptions/resources/not-found-resource.exception';
 import { QueryResourceDto } from './dtos/query-resource.dto';
 
 @Injectable()
@@ -33,7 +29,6 @@ export class ResourcesService {
   ) {}
 
   async findAll(queryDto: QueryResourceDto) {
-    console.log(queryDto);
     if (queryDto.type == undefined) {
       return this.resourcesRepository.find({
         relations: ['links'],
@@ -71,7 +66,6 @@ export class ResourcesService {
   }
 
   async findOne(id): Promise<Resource> {
-    console.log(ResourceType['FILE']);
     const resource = await this.resourcesRepository.findOne(id, {
       relations: ['links'],
     });

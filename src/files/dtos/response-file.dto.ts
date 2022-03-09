@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
-import { ResponseResourceDto } from 'src/resources/dtos/response-resource.dto';
-import { ResourceType } from 'src/resources/entities/resource.entity';
+import { ResponseResourceDto } from '../../resources/dtos/response-resource.dto';
+import { ResourceType } from '../../resources/entities/resource.entity';
 import { FileMetadata, File } from '../entities/file.entity';
 
 export class ResponseFileDto implements ResponseResourceDto {

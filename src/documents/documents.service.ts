@@ -8,8 +8,8 @@ import {
 } from './entities/document.entity';
 import { DocumentsRepository } from './documents.repository';
 import { CreateDocumentDto } from './dtos/create-document.dto';
-import { CreateResourceDto } from 'src/resources/dtos/create-resource.dto';
-import { ResourceType } from 'src/resources/entities/resource.entity';
+import { CreateResourceDto } from '../resources/dtos/create-resource.dto';
+import { ResourceType } from '../resources/entities/resource.entity';
 
 @Injectable()
 export class DocumentsService {
@@ -40,8 +40,7 @@ export class DocumentsService {
       createDocumentDto,
     );
 
-    this.logger.info('Document is created');
-    this.logger.info(document);
+    this.logger.info({ msg: 'Document is created', document: document });
 
     return document;
   }

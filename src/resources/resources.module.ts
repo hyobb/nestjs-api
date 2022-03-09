@@ -4,9 +4,9 @@ import { ResourcesController } from './resources.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResourcesRepository } from './resources.repository';
 import { Resource } from './entities/resource.entity';
-import { FilesModule } from 'src/files/files.module';
-import { UrlsModule } from 'src/urls/urls.module';
-import { DocumentsModule } from 'src/documents/documents.module';
+import { FilesModule } from '../files/files.module';
+import { UrlsModule } from '../urls/urls.module';
+import { DocumentsModule } from '../documents/documents.module';
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
-import { File } from 'src/files/entities/file.entity';
-import { Url } from 'src/urls/entities/url.entity';
+import { File } from '../../files/entities/file.entity';
+import { Url } from '../../urls/entities/url.entity';
 import { ChildEntity, Column, JoinTable, ManyToMany } from 'typeorm';
 import {
   Resource,
